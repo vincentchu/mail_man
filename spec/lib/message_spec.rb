@@ -30,7 +30,10 @@ describe MailMan::Message do
       end
 
       it "should store itself in redis" do
-        $redis.hgetall(@message.redis_key).should == {"subject" => "a subject", "message_id" => @mesg_id}
+        $redis.hgetall(@message.redis_key).should == {
+          "subject" => "a subject", 
+          "message_id" => @mesg_id
+        }
       end
 
       it "should associate the message with the tags" do
@@ -43,6 +46,21 @@ describe MailMan::Message do
         lambda {
           MailMan::Message.new.save!
         }.should raise_exception( MailMan::Message::MissingFields )
+      end
+    end
+  end
+
+  describe "initialize_from_array" do
+
+    before(:all) do
+      @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", "a_timestamp"]
+    end
+
+    it "should initialize from an array" do
+      MailMan::Message.new( @array_data ).tap do |mesg|
+        mesg.subject.should    == "subject"
+        mesg.message_id.should == "an_id"
+        # mesg.timestamp.should  == "a_timestamp"
       end
     end
   end
