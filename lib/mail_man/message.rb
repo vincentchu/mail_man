@@ -43,7 +43,7 @@ module MailMan
     def associate_tags!
       tags.each do |tag|
         MailMan.redis.lpush tag.to_s, redis_key
-        MailMan.redis.ltrim tag.to_s, 0, 99
+        MailMan.redis.ltrim tag.to_s, 0, MailMan::Tag::MAX_REDIS_LIST_LENGTH
       end
     end
   end

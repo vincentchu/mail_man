@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe MailMan::Message do
 
-
   before(:all) do
     $redis.flushdb
 
