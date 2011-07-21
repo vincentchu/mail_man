@@ -17,17 +17,17 @@ describe MailMan::Message do
 
   describe "#instantiate" do
     it "should instantiate properly with subject, tags, and message_id" do
-
       @message.subject.should == "a subject"
       @message.tags.should == ["vincentchu@gmail.com"]
       @message.message_id.should == @mesg_id
+      @message.timestamp.should_not be_nil
     end
 
     it "should initialize from an array" do
       MailMan::Message.new( @array_data ).tap do |mesg|
         mesg.subject.should    == "subject"
         mesg.message_id.should == "an_id"
-        # mesg.timestamp.should  == "a_timestamp"
+        mesg.timestamp.should  == "a_timestamp"
       end
     end
   end
