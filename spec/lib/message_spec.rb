@@ -49,6 +49,10 @@ describe MailMan::Message do
       it "should associate the message with the tags" do
        $redis.lrange("vincentchu@gmail.com", 0, -1).should == [@message.redis_key] 
       end
+
+      it "should increment lifetime_counts" do
+        $redis.get("lifetime_counter_vincentchu@gmail.com").should == "1"
+      end
     end
 
     describe "when invalid" do

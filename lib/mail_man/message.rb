@@ -18,8 +18,10 @@ module MailMan
     def save!
       raise MissingFields if (subject.nil? || message_id.nil?)
 
-      store_in_redis!
-      associate_tags!
+      MailMan.redis.pipelined {
+        store_in_redis!
+        associate_tags!
+      }
       
       self
     end
@@ -58,15 +60,14 @@ module MailMan
       args.unshift( redis_key )
 
       MailMan.redis.hmset( *args  )
-      MailMan.redis.expire redis_key, REDIS_LIFETIME 
+      MailMan.redis.expire(redis_key, REDIS_LIFETIME)
     end
 
     def associate_tags!
       tags.each do |tag|
-        MailMan.redis.pipelined {
-          MailMan.redis.lpush(tag.to_s, redis_key)
-          MailMan.redis.ltrim(tag.to_s, 0, MailMan::Tag::MAX_REDIS_LIST_LENGTH)
-        }
+        MailMan.redis.lpush(tag.to_s, redis_key)
+        MailMan.redis.ltrim(tag.to_s, 0, MailMan::Tag::MAX_REDIS_LIST_LENGTH)
+        MailMan.redis.incr("lifetime_counter_#{tag}")
       end
     end
   end
