@@ -5,7 +5,9 @@ describe MailMan::Message do
   before(:all) do
     $redis.flushdb
 
-    @mesg_id = "<4e281ce089fd4_3569e59302151e@ip-10-86-222-44.tmail>"
+    @mesg_id    = "<4e281ce089fd4_3569e59302151e@ip-10-86-222-44.tmail>"
+    @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", "a_timestamp"]
+    
     @message = MailMan::Message.new(
       :subject    => "a subject",
       :tags       => ["vincentchu@gmail.com"],
@@ -19,6 +21,14 @@ describe MailMan::Message do
       @message.subject.should == "a subject"
       @message.tags.should == ["vincentchu@gmail.com"]
       @message.message_id.should == @mesg_id
+    end
+
+    it "should initialize from an array" do
+      MailMan::Message.new( @array_data ).tap do |mesg|
+        mesg.subject.should    == "subject"
+        mesg.message_id.should == "an_id"
+        # mesg.timestamp.should  == "a_timestamp"
+      end
     end
   end
 
@@ -46,21 +56,6 @@ describe MailMan::Message do
         lambda {
           MailMan::Message.new.save!
         }.should raise_exception( MailMan::Message::MissingFields )
-      end
-    end
-  end
-
-  describe "initialize_from_array" do
-
-    before(:all) do
-      @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", "a_timestamp"]
-    end
-
-    it "should initialize from an array" do
-      MailMan::Message.new( @array_data ).tap do |mesg|
-        mesg.subject.should    == "subject"
-        mesg.message_id.should == "an_id"
-        # mesg.timestamp.should  == "a_timestamp"
       end
     end
   end
