@@ -30,7 +30,7 @@ describe MailMan::Tag do
 
   describe "#lifetime_counter" do
     it "should fetch the total number of requests made against this counter" do
-      midnight_time = MailMan::Message::DAY_IN_SECS * (Time.now.to_i / MailMan::Message::DAY_IN_SECS)
+      midnight_time = MailMan::Tag::DAY_IN_SECS * (Time.now.to_i / MailMan::Tag::DAY_IN_SECS)
 
       @tag.lifetime_counter.should == [[Time.at(midnight_time), 100]]
     end

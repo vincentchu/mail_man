@@ -2,7 +2,10 @@ module MailMan
   class Tag
 
     MissingTagName = Class.new( StandardError ) 
+
     MAX_REDIS_LIST_LENGTH = 1500
+    DAY_IN_SECS           = 86400
+    COUNTER_HISTORY       = 30
 
     attr_reader :name
 
@@ -12,20 +15,19 @@ module MailMan
     end
 
     def find( opts = {} )
-
       ind_start, ind_end = construct_pagination_opts( opts )
-      message_ids = MailMan.redis.lrange(name, ind_start, ind_end)
+      message_ids = MailMan.redis.lrange(redis_key, ind_start, ind_end)
     
       fetch_messages_from_ids!( message_ids )
     end
 
     def total_entries
-      MailMan.redis.llen( name )
+      MailMan.redis.llen( redis_key )
     end
 
     def lifetime_counter
-      counts = MailMan.redis.lrange("lifetime_counter_#{name}", 0, -1) || []
-
+      counts = MailMan.redis.lrange(redis_counter_key, 0, -1) || []
+      
       counts.collect! do |count|
         data = count.split("/").collect(&:to_i)
         
@@ -33,7 +35,41 @@ module MailMan
       end
     end
 
+    def increment_lifetime_counter!
+
+      timestamp, count = most_recent_lifetime_count
+
+      if (timestamp == midnight_today)
+        count += 1
+        MailMan.redis.lset(redis_counter_key, 0, "#{midnight_today}/#{count}")
+      else
+        MailMan.redis.lpush(redis_counter_key, "#{midnight_today}/1")
+      end
+
+      
+      MailMan.redis.ltrim(redis_counter_key, 0, COUNTER_HISTORY-1)
+    end
+
+    def most_recent_lifetime_count
+      most_recent = MailMan.redis.lindex(self.redis_counter_key, 0)
+      most_recent = most_recent ? most_recent.split("/").collect(&:to_i) : [nil, nil]
+
+      most_recent
+    end
+
+    def redis_key
+      name
+    end
+
+    def redis_counter_key
+      "lifetime_counter_#{name}"
+    end
+
     private
+
+    def midnight_today
+      DAY_IN_SECS * (Time.now.to_i / DAY_IN_SECS)
+    end
 
     def fetch_messages_from_ids!( ids )
       rsp = MailMan.redis.pipelined {

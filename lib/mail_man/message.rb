@@ -2,8 +2,6 @@ module MailMan
   class Message
     
     REDIS_LIFETIME  = 604800 # 7 days, in seconds
-    DAY_IN_SECS     = 86400
-    COUNTER_HISTORY = 30
 
     attr_accessor :subject, :tags, :message_id, :timestamp
 
@@ -66,32 +64,15 @@ module MailMan
     end
 
     def associate_tags!
-      tags.each do |tag|
-        MailMan.redis.lpush(tag.to_s, redis_key)
-        MailMan.redis.ltrim(tag.to_s, 0, MailMan::Tag::MAX_REDIS_LIST_LENGTH)
-        increment_lifetime_counter!(tag)  
+      tags.each do |tag_name|
+
+        tag = MailMan::Tag.new( tag_name )
+
+        MailMan.redis.lpush(tag.redis_key, redis_key)
+        MailMan.redis.ltrim(tag.redis_key, 0, MailMan::Tag::MAX_REDIS_LIST_LENGTH)
+
+        tag.increment_lifetime_counter!
       end
     end
-
-    def increment_lifetime_counter!(tag)
-   
-      key = "lifetime_counter_#{tag}"
-      most_recent = MailMan.redis.lindex(key, 0)
-      most_recent = most_recent ? most_recent.split("/").collect(&:to_i) : ["XX", "XX"]
-      
-      if most_recent[0] == midnight_time
-        count = most_recent[1] + 1
-        MailMan.redis.lset(key, 0, "#{midnight_time}/#{count}")
-      else
-        MailMan.redis.lpush(key, "#{midnight_time}/1")
-      end
-
-      MailMan.redis.ltrim(key, 0, COUNTER_HISTORY-1)
-    end
-
-    def midnight_time
-      DAY_IN_SECS * (Time.now.to_i / DAY_IN_SECS)
-    end
-
   end
 end
