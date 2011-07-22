@@ -39,7 +39,7 @@ module MailMan
     def initialize_from_hash!( opts )
       @subject    = opts[:subject]
       @message_id = opts[:message_id]
-      @tags       = opts[:tags] if ( opts.key?(:tags) && opts[:tags].is_a?(Array) )
+      @tags       = ( opts.key?(:tags) && opts[:tags].is_a?(Array) ) ? opts[:tags] : []
       @timestamp  = (opts[:timestamp] || Time.now)
     end
 

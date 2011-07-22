@@ -12,6 +12,10 @@ describe MailMan::Server do
     last_response.status.should == 200
   end
 
+  describe "Fetching information about a tag" do
+
+  end
+
   describe "Logging a message" do 
     it "should create a message" do
       
@@ -20,10 +24,10 @@ describe MailMan::Server do
       MailMan::Message.should_receive(:new).once.and_return(@message)
 
       post("/message", 
-        :subject    => "subject",
-        :message_id => "m_id",
-        :tags       => ["john@harvard.edu", "mysubs"],
-        :timestamp  => "timestamp"
+        "subject"    => "subject",
+        "message_id" => "m_id",
+        "tags"       => ["john@harvard.edu", "mysubs"],
+        "timestamp"  => "timestamp"
       )
 
       last_response.status.should == 200

@@ -8,8 +8,12 @@ module MailMan
     end
 
     post '/message' do
+      puts "params = #{params.inspect}"
       begin
-        MailMan::Message.new( construct_opts(params) ).save!
+        execute_async_if_possible {
+          MailMan::Message.new( construct_opts(params) ).save!
+        }
+
         [200, {}, ""]
       rescue => ex
         [400, {}, "Exception: #{ex.message}"]
@@ -18,9 +22,14 @@ module MailMan
 
     private
 
+    def execute_async_if_possible(&block)
+      puts "EM.reactor_running? #{EM.reactor_running?}"
+      EM.reactor_running? ? EM.next_tick(&block) : block.call
+    end
+
     def construct_opts( params )
-      opts = [:subject, :message_id, :tags, :timestamp].inject({}) { |hash, attr|
-        hash[attr] = params[attr] if params.key?(attr)
+      opts = %w(subject message_id tags timestamp).inject({}) { |hash, attr|
+        hash[attr.to_sym] = params[attr] if params.key?(attr)
         hash
       }
 

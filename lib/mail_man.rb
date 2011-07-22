@@ -1,5 +1,5 @@
 require 'redis'
-require 'digest/md5'
+require 'eventmachine'
 
 module MailMan
 
@@ -13,5 +13,9 @@ module MailMan
 
   def redis
     @redis ||= Redis.new(:host => "localhost", :port => 6379)
+  end
+
+  def start_em_reactor!
+    require("mail_man/event_machine")
   end
 end
