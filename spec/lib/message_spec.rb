@@ -51,7 +51,11 @@ describe MailMan::Message do
       end
 
       it "should increment lifetime_counts" do
-        $redis.get("lifetime_counter_vincentchu@gmail.com").should == "1"
+
+        midnight_time = MailMan::Message::DAY_IN_SECS * (Time.now.to_i / MailMan::Message::DAY_IN_SECS)
+
+        data = $redis.lindex("lifetime_counter_vincentchu@gmail.com", 0)
+        data.should == "#{midnight_time}/1"
       end
     end
 

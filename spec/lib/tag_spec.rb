@@ -3,6 +3,7 @@ require 'spec_helper'
 describe MailMan::Tag do
 
   before(:all) do
+    $redis.flushdb
     @address = "john@harvard.edu"
     @tag = MailMan::Tag.new( @address )
 
@@ -29,7 +30,9 @@ describe MailMan::Tag do
 
   describe "#lifetime_counter" do
     it "should fetch the total number of requests made against this counter" do
-      @tag.lifetime_counter.should == 100
+      midnight_time = MailMan::Message::DAY_IN_SECS * (Time.now.to_i / MailMan::Message::DAY_IN_SECS)
+
+      @tag.lifetime_counter.should == [[Time.at(midnight_time), 100]]
     end
   end
 

@@ -24,7 +24,13 @@ module MailMan
     end
 
     def lifetime_counter
-      MailMan.redis.get("lifetime_counter_#{name}").to_i
+      counts = MailMan.redis.lrange("lifetime_counter_#{name}", 0, -1) || []
+
+      counts.collect! do |count|
+        data = count.split("/").collect(&:to_i)
+        
+        [Time.at(data[0]), data[1]]
+      end
     end
 
     private

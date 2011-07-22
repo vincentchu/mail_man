@@ -8,7 +8,6 @@ module MailMan
     end
 
     post '/message' do
-      puts "params = #{params.inspect}"
       begin
         execute_async_if_possible {
           MailMan::Message.new( construct_opts(params) ).save!
@@ -23,7 +22,6 @@ module MailMan
     private
 
     def execute_async_if_possible(&block)
-      puts "EM.reactor_running? #{EM.reactor_running?}"
       EM.reactor_running? ? EM.next_tick(&block) : block.call
     end
 
