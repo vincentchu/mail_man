@@ -4,7 +4,7 @@ module MailMan
   class Server < Sinatra::Application
 
     get '/' do
-      " this is root"
+      "this is root"
     end
 
     post '/message' do
