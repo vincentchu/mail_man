@@ -95,14 +95,24 @@ module MailMan
 
       new_counts
     end
+    def average( array )
+      n = array.length
+      sum = array.inject(0) {|running_sum, val| running_sum += val }
+
+      (sum.to_f / n)
+    end
 
     def construct_counts
-
       ltime_counts = lifetime_counter
-      puts "ltime_counts = #{ltime_counts.inspect}"
+      today = ltime_counts.first.last
+      last_week = average( ltime_counts[1..7].collect(&:last) )
+      last_two_weeks = average( ltime_counts[1..14].collect(&:last) )
 
       {
-        :lifetime_counter => ltime_counts
+        :lifetime_counter   => ltime_counts,
+        :today              => ltime_counts.first.last,
+        :avg_last_week      => last_week,
+        :avg_last_two_weeks => last_two_weeks
       }
     end
 

@@ -25,20 +25,34 @@ describe MailMan::Tag do
   describe "#summary" do
     before(:all) do
 
-      puts "XXX #{@tag.lifetime_counter}"
+      @counts = @tag.lifetime_counter
       @tag.should_receive(:find).any_number_of_times.and_return(@tag.find)
-      @tag.should_receive(:lifetime_counter).any_number_of_times.and_return(@tag.lifetime_counter)
+      @tag.should_receive(:lifetime_counter).any_number_of_times.and_return(@counts)
 
       @summary = @tag.summary
     end
 
     describe "counts" do
-      it "should contain the lifetime counts" do
+
+      before(:all) do
+        @count_summary = @summary[:counts]
       end
 
-      it "should contain the average over the past 7 days"
+      it "should contain the lifetime counts" do
+        @count_summary[:lifetime_counter].should == @tag.lifetime_counter
+      end
+      
+      it "should contain the current day's counts" do
+        @count_summary[:today].should == 100
+      end
 
-      it "should contain the average over the past 14 days"
+      it "should contain the average over the past 7 days" do
+        @count_summary[:avg_last_week].should == 0
+      end
+
+      it "should contain the average over the past 14 days" do
+        @count_summary[:avg_last_two_weeks].should == 0
+      end
     end
 
     it "should contain the messages" do
