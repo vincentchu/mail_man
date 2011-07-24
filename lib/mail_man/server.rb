@@ -18,6 +18,16 @@ module MailMan
     end
 
     post '/message' do
+      create_message!
+    end
+
+    post '/messages' do
+      create_message!
+    end
+
+    private
+
+    def create_message!
       begin
         execute_async_if_possible {
           MailMan::Message.new( construct_opts(params) ).save!
@@ -28,8 +38,6 @@ module MailMan
         [400, {}, "Exception: #{ex.message}"]
       end
     end
-
-    private
 
     def execute_async_if_possible(&block)
       EM.reactor_running? ? EM.next_tick(&block) : block.call
