@@ -22,6 +22,31 @@ describe MailMan::Tag do
     end
   end 
    
+  describe "#summary" do
+    before(:all) do
+
+      puts "XXX #{@tag.lifetime_counter}"
+      @tag.should_receive(:find).any_number_of_times.and_return(@tag.find)
+      @tag.should_receive(:lifetime_counter).any_number_of_times.and_return(@tag.lifetime_counter)
+
+      @summary = @tag.summary
+    end
+
+    describe "counts" do
+      it "should contain the lifetime counts" do
+      end
+
+      it "should contain the average over the past 7 days"
+
+      it "should contain the average over the past 14 days"
+    end
+
+    it "should contain the messages" do
+      @summary[:messages].should == @tag.find
+    end
+  end
+
+
   describe "#total_entries" do
     it "should find total entries" do
       @tag.total_entries.should == 100
@@ -32,7 +57,12 @@ describe MailMan::Tag do
     it "should fetch the total number of requests made against this counter" do
       midnight_time = MailMan::Tag::DAY_IN_SECS * (Time.now.to_i / MailMan::Tag::DAY_IN_SECS)
 
-      @tag.lifetime_counter.should == [[Time.at(midnight_time), 100]]
+      @tag.lifetime_counter.first == [Time.at(midnight_time), 100]
+    end
+
+    it "should pad the history to ensure that there are #{MailMan::Tag::COUNTER_HISTORY} items" do
+      counts = @tag.lifetime_counter
+      counts.length.should == 30
     end
   end
 

@@ -14,6 +14,13 @@ module MailMan
       @name = tag_name.to_s
     end
 
+    def summary(opts = {})
+      {
+        :counts   => construct_counts,
+        :messages => self.find( opts )
+      }
+    end
+
     def find( opts = {} )
       ind_start, ind_end = construct_pagination_opts( opts )
       message_ids = MailMan.redis.lrange(redis_key, ind_start, ind_end)
@@ -33,6 +40,8 @@ module MailMan
         
         [Time.at(data[0]), data[1]]
       end
+
+      pad_counts( counts )
     end
 
     def increment_lifetime_counter!
@@ -66,6 +75,36 @@ module MailMan
     end
 
     private
+
+    def pad_counts( counts )
+
+      new_counts = Array.new( COUNTER_HISTORY )
+      counts.each do |count|
+        timestamp = count.first.to_i
+        index = (midnight_today - timestamp) / DAY_IN_SECS
+
+        new_counts[index] = count
+      end
+
+      (0..(COUNTER_HISTORY-1)).each do |i|
+        next unless new_counts[i].nil?
+        
+        timestamp = midnight_today - (i*DAY_IN_SECS)
+        new_counts[i] = [Time.at(timestamp), 0]
+      end
+
+      new_counts
+    end
+
+    def construct_counts
+
+      ltime_counts = lifetime_counter
+      puts "ltime_counts = #{ltime_counts.inspect}"
+
+      {
+        :lifetime_counter => ltime_counts
+      }
+    end
 
     def midnight_today
       DAY_IN_SECS * (Time.now.to_i / DAY_IN_SECS)
