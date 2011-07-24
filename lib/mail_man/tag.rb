@@ -1,7 +1,8 @@
 module MailMan
   class Tag
 
-    MissingTagName = Class.new( StandardError ) 
+    MissingTagName = Class.new( StandardError )
+    NotFound       = Class.new( StandardError )
 
     MAX_REDIS_LIST_LENGTH = 1500
     DAY_IN_SECS           = 86400
@@ -24,7 +25,8 @@ module MailMan
     def find( opts = {} )
       ind_start, ind_end = construct_pagination_opts( opts )
       message_ids = MailMan.redis.lrange(redis_key, ind_start, ind_end)
-    
+  
+      raise NotFound if message_ids.empty?
       fetch_messages_from_ids!( message_ids )
     end
 
