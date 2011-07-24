@@ -81,13 +81,11 @@ describe MailMan::Tag do
   end
 
   describe "#find" do
-
     it "should raise a NotFound exception if the tag doesn't exist" do
       lambda {
         MailMan::Tag.new("random_tag").find
       }.should raise_exception( MailMan::Tag::NotFound )
     end
-
 
     it "should return the first 10 results" do
       results = @tag.find

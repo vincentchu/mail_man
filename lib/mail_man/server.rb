@@ -7,6 +7,16 @@ module MailMan
       "this is root"
     end
 
+    get "/tags/:id" do
+      @tag = MailMan::Tag.new( params[:id] )
+      
+      begin
+        @summary = @tag.summary
+      rescue MailMan::Tag::NotFound => ex
+        return [404, {}, "We could not find #{@tag.name} anywhere"]
+      end
+    end
+
     post '/message' do
       begin
         execute_async_if_possible {

@@ -13,6 +13,29 @@ describe MailMan::Server do
   end
 
   describe "Fetching information about a tag" do
+    before(:each) do
+      $redis.flushdb
+
+      MailMan::Message.new(:subject => "subj", :message_id => "id", :tags => ["foo"]).save!
+      @tag     = MailMan::Tag.new("foo")
+      @summary = @tag.summary
+      
+      MailMan::Tag.should_receive(:new).once.and_return(@tag)
+    end
+
+    it "should return 200 if the tag exists" do
+      @tag.should_receive(:summary).once.and_return(@summary)
+
+      get "/tags/foo"
+      last_response.status.should == 200
+    end
+
+    it "should return 404 if the tag doesn't exist" do
+      @tag.should_receive(:summary).once.and_raise( MailMan::Tag::NotFound )
+
+      get "/tags/foo"
+      last_response.status.should == 404
+    end
 
   end
 
