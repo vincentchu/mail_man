@@ -50,11 +50,16 @@ module MailMan
         self.send("#{attr}=", array[index+1])
       end
 
-      timestamp = Time.now if timestamp.nil?
+      @timestamp = Time.at( timestamp.to_i ) rescue Time.now
     end
 
     def store_in_redis!
-      args = { :subject => subject, :message_id => message_id }.to_a.flatten
+      args = { 
+        :subject    => subject,
+        :message_id => message_id,
+        :timestamp  => timestamp.to_i
+      }.to_a.flatten
+      
       args.unshift( redis_key )
 
       MailMan.redis.pipelined {

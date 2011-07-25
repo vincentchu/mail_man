@@ -6,7 +6,8 @@ describe MailMan::Message do
     $redis.flushdb
 
     @mesg_id    = "<4e281ce089fd4_3569e59302151e@ip-10-86-222-44.tmail>"
-    @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", "a_timestamp"]
+    @time_int   = Time.now.to_i
+    @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", @time_int.to_s]
     
     @message = MailMan::Message.new(
       :subject    => "a subject",
@@ -20,14 +21,15 @@ describe MailMan::Message do
       @message.subject.should == "a subject"
       @message.tags.should == ["vincentchu@gmail.com"]
       @message.message_id.should == @mesg_id
-      @message.timestamp.should_not be_nil
+      (Time.now.to_i - @message.timestamp.to_i).should be_within(10).of(0)
     end
 
     it "should initialize from an array" do
       MailMan::Message.new( @array_data ).tap do |mesg|
         mesg.subject.should    == "subject"
         mesg.message_id.should == "an_id"
-        mesg.timestamp.should  == "a_timestamp"
+        mesg.timestamp.should be_an_instance_of(Time)
+        mesg.timestamp.to_i.should be_within(10).of(@time_int)
       end
     end
   end
@@ -40,10 +42,11 @@ describe MailMan::Message do
       end
 
       it "should store itself in redis" do
-        $redis.hgetall(@message.redis_key).should == {
-          "subject" => "a subject", 
-          "message_id" => @mesg_id
-        }
+        hash = $redis.hgetall(@message.redis_key)
+
+        hash["subject"].should    == "a subject"
+        hash["message_id"].should == @mesg_id
+        (Time.now.to_i - hash["timestamp"].to_i).should be_within(10).of(0)
       end
 
       it "should associate the message with the tags" do

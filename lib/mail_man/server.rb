@@ -4,7 +4,7 @@ module MailMan
   class Server < Sinatra::Application
 
     get '/' do
-      "this is root"
+      erb :index
     end
 
     get "/tags/:id" do
