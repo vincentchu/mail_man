@@ -5,7 +5,7 @@
 
   .content
     .counters
-      - [[:today, "Today"], [:avg_last_week, "Last Week"], [:avg_last_two_weeks, "Last Two Weeks"]].each do |type|
+      - [[:today, "Today"], [:avg_last_week, "Weekly Average"], [:avg_last_two_weeks, "Two Week Average"]].each do |type|
         .count
           = haml :_counter, :locals => {:count => @counts[type.first], :name => type.last}
 
