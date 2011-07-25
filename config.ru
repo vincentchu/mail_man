@@ -7,6 +7,7 @@ require 'mail_man'
 MailMan.environment = ENV['RACK_ENV']
 MailMan.start_em_reactor! if (MailMan.environment == "production")
 
+use Rack::Static, :urls => ['/images', '/js', '/css'], :root => 'public'
 use Rack::ShowExceptions 
 run MailMan::Server.new
 
