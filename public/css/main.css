@@ -6,6 +6,16 @@ body, html {
     color: #3B3030;
 }
 
+body {
+  text-align: center;
+}
+
+#center_body {
+  text-align: left;
+  width: 850px;
+  margin: 0 auto;
+}
+
 h1 {
     font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
     font-weight: bold;
@@ -14,20 +24,63 @@ h1 {
 }
 
 h2 {
-    font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
-    font-weight: bold;
-    font-size: 30px;
-    margin-bottom: 10px;
+  font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
+  font-weight: bold;
+  font-size: 30px;
+  margin-bottom: 10px;
 }
 
 h3 {
-    font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
-    font-weight: bold;
-    font-size: 15px;
-    margin-bottom: 10px;
+  font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.content {
+  clear: both;
+  display: inline-block;
+}
+
+.section {
+  padding-left: 40px;
+}
+
+.counters {
+  float: left; 
+}
+
+.counters .count {
+  padding: 10px 20px 10px 20px;
+  text-align: center;
+}
+
+.counters .count .number {
+  font-family: 'Trebuchet MS', Arial, Helvetica, san-serif;
+  font-weight: bold;
+  font-size: 30px;
 }
 
 .plot #data_plot {
-  width: 500px;
+  width: 600px;
   height: 160px;
+}
+
+.plot {
+  float: left;
+  padding: 35px 10px 20px 10px;
+}
+
+.messages_pane {
+  padding-left: 10px;
+}
+
+.message {
+  padding: 5px 0px 5px 0px;
+}
+
+.message .message_id {
+  color: #585D5D;
+  font-size: 12px;
+  padding-top: 5px;
 }

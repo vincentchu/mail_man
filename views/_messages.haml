@@ -1,5 +1,7 @@
 - messages.each do |message|
-  .subject
-    = "<strong>#{message.subject}</strong>"
-  %span.message_id
-    = CGI.escapeHTML message.message_id
+  .message
+    .subject
+      = "<strong>#{message.subject}</strong>"
+
+    .message_id
+      = CGI.escapeHTML message.message_id
