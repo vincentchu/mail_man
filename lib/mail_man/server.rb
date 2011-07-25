@@ -1,10 +1,14 @@
 require 'sinatra/base'
+require 'haml'
 
 module MailMan
   class Server < Sinatra::Application
 
+    set :static, true
+    set :haml, :format => :html5
+
     get '/' do
-      erb :index
+      haml :index
     end
 
     get "/tags/:id" do
