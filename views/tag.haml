@@ -1,0 +1,26 @@
+%h1= "#{@tag.name}"
+
+.summary
+  %h2 Summary
+
+  .content
+    .counters
+      .count
+        - [[:today, "Today"], [:avg_last_week, "Last Week"], [:avg_last_two_weeks, "Last Two Weeks"]].each do |type|
+          = haml :_counter, :locals => {:count => @counts[type.first], :name => type.last}
+
+    .plot
+      #data_plot
+
+.messages
+  %h2 Messages
+  - @mesgs.keys.sort.each do |date|
+    %h3
+      = date.strftime("%A, %b %d")
+    .messages_pane
+      = haml :_messages, :locals => { :messages => @mesgs[date] }
+
+%script
+  = %Q[var _data = #{@history.to_json};]
+  $.plot($("#data_plot"), [_data], { xaxis: { mode: "time" } });
+

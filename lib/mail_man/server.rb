@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'haml'
+require 'json'
 
 module MailMan
   class Server < Sinatra::Application
@@ -8,6 +9,7 @@ module MailMan
     set :haml, :format => :html5
 
     get '/' do
+      status 404
       haml :index
     end
 
@@ -16,9 +18,15 @@ module MailMan
       
       begin
         @summary = @tag.summary
+        @counts  = @summary[:counts]
+        @history = @counts[:lifetime_counter].collect {|c| [(1000 * c.first.to_i), c.last] }
+        @mesgs   = @summary[:messages].group_by {|m| m.timestamp }
+
       rescue MailMan::Tag::NotFound => ex
-        return [404, {}, "We could not find #{@tag.name} anywhere"]
+        return [404, {}, "NotFound"]
       end
+
+      haml :tag
     end
 
     post '/message' do
