@@ -9,7 +9,6 @@ module MailMan
     set :haml, :format => :html5
 
     get '/' do
-      status 404
       haml :index
     end
 
@@ -20,7 +19,7 @@ module MailMan
         @summary = @tag.summary
         @counts  = @summary[:counts]
         @history = @counts[:lifetime_counter].collect {|c| [(1000 * c.first.to_i), c.last] }
-        @mesgs   = @summary[:messages].group_by {|m| m.timestamp }
+        @mesgs   = @summary[:messages].group_by {|m| round_to_midnight(m.timestamp) }
 
       rescue MailMan::Tag::NotFound => ex
         return [404, {}, "NotFound"]
@@ -38,6 +37,11 @@ module MailMan
     end
 
     private
+
+    def round_to_midnight( time )
+      time_int = MailMan::Tag::DAY_IN_SECS * (time.to_i / MailMan::Tag::DAY_IN_SECS)
+      Time.at( time_int )
+    end
 
     def create_message!
       begin
