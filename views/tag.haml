@@ -13,7 +13,7 @@
       #data_plot
 
 .messages.section
-  %h2 Messages
+  %h3= %Q[Messages (#{@summary[:messages].count} of #{@total})]
   
   .list
     - @mesgs.keys.sort.each do |date|

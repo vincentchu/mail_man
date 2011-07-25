@@ -20,6 +20,7 @@ module MailMan
         @counts  = @summary[:counts]
         @history = @counts[:lifetime_counter].collect {|c| [(1000 * c.first.to_i), c.last] }
         @mesgs   = @summary[:messages].group_by {|m| round_to_midnight(m.timestamp) }
+        @total   = @tag.total_entries
 
       rescue MailMan::Tag::NotFound => ex
         return [404, {}, "NotFound"]
