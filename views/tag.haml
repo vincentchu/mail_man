@@ -16,7 +16,7 @@
   %h3= %Q[Messages (#{@summary[:messages].count} of #{@total})]
   
   .list
-    - @mesgs.keys.sort.each do |date|
+    - @mesgs.keys.sort.reverse_each do |date|
       %h3
         = date.strftime("%A, %b %d")
       .messages_pane
