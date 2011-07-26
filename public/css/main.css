@@ -76,18 +76,20 @@ h3 {
 }
 
 .message {
-  padding: 5px 0px 5px 0px;
+  padding: 10px 0px 10px 0px;
 }
 
 .message .message_id {
   color: #585D5D;
   font-size: 12px;
   padding-top: 5px;
+  padding-left: 15px;
 }
 
 .tags {
-  padding-top: 5px;
   font-size: 11px;
+  padding-top: 5px;
+  padding-left: 15px;
 }
 
 ul.tag {
