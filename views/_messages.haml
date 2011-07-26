@@ -1,7 +1,16 @@
 - messages.each do |message|
   .message
     .subject
-      = "<strong>#{message.subject}</strong>"
+      %span.subj= message.subject
 
     .message_id
       = CGI.escapeHTML message.message_id
+    
+    .tags
+      Tags: 
+      - message.tags.each do |tag|
+        - next if (tag == @tag.name)
+        %ul.tag
+          %li
+            %a.tag{:href => "/tags/#{tag}"}
+              %span= tag.to_s

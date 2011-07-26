@@ -84,3 +84,36 @@ h3 {
   font-size: 12px;
   padding-top: 5px;
 }
+
+.tags {
+  padding-top: 5px;
+  font-size: 11px;
+}
+
+ul.tag {
+  list-style-type: none;
+  display: inline-block;
+  margin: 0px 5px 0px 0px;
+  -webkit-padding-start: 0px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+a.tag {
+  text-shadow: 1px 1px 0 white;
+  border: 1px solid #D4D4D4;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  padding: 4px;
+  color: #333;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a.tag:hover {
+  text-decoration: underline;
+}
+
+span.subj {
+  font-weight: bold;
+}
