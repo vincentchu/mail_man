@@ -13,6 +13,8 @@ module MailMan
       elsif opts.is_a?(Array)
         initialize_from_array!( opts )
       end
+
+      @tags = [] unless @tags.is_a?(Array)
     end
 
     def save!
