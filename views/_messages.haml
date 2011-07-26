@@ -7,7 +7,6 @@
       = CGI.escapeHTML message.message_id
     
     .tags
-      Tags: 
       - message.tags.each do |tag|
         - next if (tag == @tag.name)
         %ul.tag
