@@ -16,7 +16,7 @@ module MailMan
       @tag = MailMan::Tag.new( params[:id] )
       
       begin
-        @summary = @tag.summary
+        @summary = @tag.summary(:per_page => 100)
         @counts  = @summary[:counts]
         @history = @counts[:lifetime_counter].collect {|c| [(1000 * c.first.to_i), c.last] }
         @mesgs   = @summary[:messages].group_by {|m| round_to_midnight(m.timestamp) }
