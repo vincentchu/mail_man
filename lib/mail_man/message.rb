@@ -42,12 +42,14 @@ module MailMan
     end
 
     def initialize_from_array!( array )
-      %w(subject message_id timestamp).each do |attr|
+      %w(subject message_id timestamp tags).each do |attr|
 
         index = array.index( attr )
         next if index.nil?
 
-        self.send("#{attr}=", array[index+1])
+        val = (attr == "tags") ? array[index+1].split(",") : array[index+1]
+
+        self.send("#{attr}=", val)
       end
 
       @timestamp = Time.at( timestamp.to_i ) rescue Time.now
@@ -57,7 +59,8 @@ module MailMan
       args = { 
         :subject    => subject,
         :message_id => message_id,
-        :timestamp  => timestamp.to_i
+        :timestamp  => timestamp.to_i,
+        :tags       => tags.join(",")
       }.to_a.flatten
       
       args.unshift( redis_key )

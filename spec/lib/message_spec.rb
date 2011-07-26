@@ -7,7 +7,7 @@ describe MailMan::Message do
 
     @mesg_id    = "<4e281ce089fd4_3569e59302151e@ip-10-86-222-44.tmail>"
     @time_int   = Time.now.to_i
-    @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", @time_int.to_s]
+    @array_data = ["subject", "subject", "message_id", "an_id", "timestamp", @time_int.to_s, "tags", "tag1,tag2,tag3"]
     
     @message = MailMan::Message.new(
       :subject    => "a subject",
@@ -28,6 +28,8 @@ describe MailMan::Message do
       MailMan::Message.new( @array_data ).tap do |mesg|
         mesg.subject.should    == "subject"
         mesg.message_id.should == "an_id"
+        mesg.tags.should       == ["tag1", "tag2", "tag3"]
+
         mesg.timestamp.should be_an_instance_of(Time)
         mesg.timestamp.to_i.should be_within(10).of(@time_int)
       end
@@ -46,6 +48,7 @@ describe MailMan::Message do
 
         hash["subject"].should    == "a subject"
         hash["message_id"].should == @mesg_id
+        hash["tags"].should       == "vincentchu@gmail.com"
         (Time.now.to_i - hash["timestamp"].to_i).should be_within(10).of(0)
       end
 
